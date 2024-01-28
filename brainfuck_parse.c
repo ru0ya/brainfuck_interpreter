@@ -6,9 +6,9 @@
 
 void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
 {
-	unsigned char memory[3000] = {0}; //initialize memory with zero
+	unsigned char memory[MEMSIZE] = {0}; //initialize memory with zero
 	unsigned char *ptr = memory; //pointer to current memory cell
-	int loop_stack[3000] = {0};  // 
+	int loop_stack[MEMSIZE] = {0};  // 
 	int stack_pointer = -1; // helps to keep track of current pointer
 
 
@@ -36,12 +36,16 @@ void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
 				loop_stack[++stack_pointer] = i;
 				break;
 			case LOOP_END:
-				
+				if (*ptr != 0) {
+					i = loop_stack[stack_pointer--];
+				} else {
+					stack_pointer--;
+				}
 				break;
 			case INVALID_COMMAND:
-			fprintf(stderr, "Error: Unknown command encountered.\n");
-			exit(EXIT_FAILURE);
-			break;
+				fprintf(stderr, "Error: Unknown command encountered.\n");
+				exit(EXIT_FAILURE);
+				break;
 
 			default:
 				break;
