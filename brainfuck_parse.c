@@ -3,30 +3,37 @@
 #include "brainfuck_parse.h"
 #include "brainfuck_lexer.h"
 
+
 void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
 {
+	unsigned char memory[3000] = {0}; //initialize memory with zero
+	unsigned char *ptr = memory; //pointer to current memory cell
+	int loop_stack[3000] = {0};  // 
+	int stack_pointer = -1; // helps to keep track of current pointer
+
+
 	 for (int i = 0; i < numTokens; ++i) {
 		switch (tokens[i]) {
 			case INC_PTR:
-				// Handle increment pointer logic
+				ptr++;
 				break;
 			case DEC_PTR:
-				
+				ptr--;
 				break;
 			case INC_VAL:
-				
+				*ptr = *ptr + 1;
 				break;
 			case DEC_VAL:
-				
+				*ptr = *ptr - 1;
 				break;
 			case OUTPUT:
-				
+				putchar(*ptr);
 				break;
 			case INPUT:
-				
+				*ptr = getchar();
 				break;
 			case LOOP_START:
-				
+				loop_stack[++stack_pointer] = i;
 				break;
 			case LOOP_END:
 				
