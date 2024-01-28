@@ -4,16 +4,17 @@
 #include "brainfuck_lexer.h"
 
 
-void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
+void parseBrainfuck(const char* code)
 {
 	unsigned char memory[MEMSIZE] = {0}; //initialize memory with zero
 	unsigned char *ptr = memory; //pointer to current memory cell
-	int loop_stack[MEMSIZE] = {0};  // 
+	int loop_stack[MEMSIZE] = {0};  // stack to handle loop
 	int stack_pointer = -1; // helps to keep track of current pointer
+	char command; // holds current command
 
 
-	 for (int i = 0; i < numTokens; ++i) {
-		switch (tokens[i]) {
+	 while (command = *code) {
+		switch (command) {
 			case INC_PTR:
 				ptr++;
 				break;
@@ -21,10 +22,10 @@ void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
 				ptr--;
 				break;
 			case INC_VAL:
-				*ptr = *ptr + 1;
+				(*ptr)++;
 				break;
 			case DEC_VAL:
-				*ptr = *ptr - 1;
+				(*ptr)--;
 				break;
 			case OUTPUT:
 				putchar(*ptr);
@@ -33,22 +34,20 @@ void parseBrainfuck(const char* code, BrainfuckComm tokens[], int numTokens)
 				*ptr = getchar();
 				break;
 			case LOOP_START:
-				loop_stack[++stack_pointer] = i;
+				loop_stack[++stack_pointer] = command;
 				break;
 			case LOOP_END:
 				if (*ptr != 0) {
-					i = loop_stack[stack_pointer--];
+					command = loop_stack[stack_pointer--];
 				} else {
 					stack_pointer--;
 				}
 				break;
-			case INVALID_COMMAND:
+			default:
 				fprintf(stderr, "Error: Unknown command encountered.\n");
 				exit(EXIT_FAILURE);
 				break;
-
-			default:
-				break;
 		}
+		code++;
 	}
 }
